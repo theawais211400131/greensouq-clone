@@ -7,9 +7,34 @@ export default function ProductPage() {
   const [quantity, setQuantity] = useState(1);
   const [showMore, setShowMore] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [email, setEmail] = useState("");
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleIncrease = () => setQuantity((q) => q + 1);
   const handleDecrease = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email) return;
+
+    setIsLoading(true);
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      console.log("Subscribed email:", email);
+      
+      setIsSubscribed(true);
+      setEmail("");
+      
+    } catch (error) {
+      console.error("Subscription error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Main product data
   const mainProduct = {
@@ -220,14 +245,13 @@ export default function ProductPage() {
   // Current product being displayed (main or selected from related)
   const currentProduct = selectedProduct || mainProduct;
 
-const handleProductClick = (product: any) => {
-  setSelectedProduct(product);
-  setShowMore(false);
-  setQuantity(1);
-  // Scroll to top smoothly
-  window.scrollTo({ top: 0, behavior: "smooth" });
-};
-
+  const handleProductClick = (product: any) => {
+    setSelectedProduct(product);
+    setShowMore(false);
+    setQuantity(1);
+    // Scroll to top smoothly
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleShowMoreInfo = () => {
     setShowMore(!showMore);
@@ -455,7 +479,7 @@ const handleProductClick = (product: any) => {
         </div>
       </div>
 
-      {/* Newsletter Section */}
+      {/* Updated Newsletter Section */}
       <section className="bg-gradient-to-r from-green-50 to-emerald-100 py-16 mt-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-gray-800 mb-4">
@@ -464,15 +488,54 @@ const handleProductClick = (product: any) => {
           <p className="text-gray-600 mb-8 text-lg">
             Get the latest offers, gardening tips, and new plant arrivals delivered to your inbox.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-            />
-            <button className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
-              Subscribe
-            </button>
+          
+          {/* Updated Email Subscription Component */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-md mx-auto">
+            {!isSubscribed ? (
+              <>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base transition-all duration-300 hover:border-green-400"
+                  required
+                />
+                <button 
+                  onClick={handleSubscribe}
+                  disabled={isLoading}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm sm:text-base flex items-center justify-center gap-2"
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Subscribing...
+                    </>
+                  ) : (
+                    <>
+                      <span>📧</span>
+                      Subscribe
+                    </>
+                  )}
+                </button>
+              </>
+            ) : (
+              <div className="w-full bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-4 text-center animate-fade-in">
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-green-600 text-lg">✅</span>
+                  </div>
+                  <div className="text-left">
+                    <p className="text-green-800 font-semibold text-sm sm:text-base">
+                      Thank you for subscribing!
+                    </p>
+                    <p className="text-green-600 text-xs sm:text-sm">
+                      Welcome to the GreenSouq community 🌱
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>

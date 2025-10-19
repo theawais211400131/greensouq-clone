@@ -1,6 +1,12 @@
+"use client";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function HomePage() {
+  const [email, setEmail] = useState("");
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   // Define the 4 main images
   const mainImages = {
     image1: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&h=500&fit=crop",
@@ -15,6 +21,28 @@ export default function HomePage() {
     hover2: "https://images.unsplash.com/photo-1598974357801-cbca100e65d3?w=300&h=300&fit=crop",
     hover3: "https://images.unsplash.com/photo-1525498128493-380d1990a112?w=300&h=300&fit=crop",
     hover4: "https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=300&h=300&fit=crop"
+  };
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email) return;
+
+    setIsLoading(true);
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      console.log("Subscribed email:", email);
+      
+      setIsSubscribed(true);
+      setEmail("");
+      
+    } catch (error) {
+      console.error("Subscription error:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Hero section images
@@ -305,18 +333,67 @@ export default function HomePage() {
           <p className="text-gray-600 mb-6 sm:mb-8 text-base sm:text-lg">
             Get the latest offers, gardening tips, and new plant arrivals delivered to your inbox.
           </p>
+          
+          {/* Updated Email Subscription Component */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base"
-            />
-            <button className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition-all duration-300 transform hover:scale-105 shadow-lg text-sm sm:text-base">
-              Subscribe
-            </button>
+            {!isSubscribed ? (
+              <>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base transition-all duration-300 hover:border-green-400"
+                  required
+                />
+                <button 
+                  onClick={handleSubscribe}
+                  disabled={isLoading}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm sm:text-base flex items-center justify-center gap-2"
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Subscribing...
+                    </>
+                  ) : (
+                    <>
+                      <span>📧</span>
+                      Subscribe
+                    </>
+                  )}
+                </button>
+              </>
+            ) : (
+              <div className="w-full bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-4 text-center animate-fade-in">
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-green-600 text-lg">✅</span>
+                  </div>
+                  <div className="text-left">
+                    <p className="text-green-800 font-semibold text-sm sm:text-base">
+                      Thank you for subscribing!
+                    </p>
+                    <p className="text-green-600 text-xs sm:text-sm">
+                      Welcome to the GreenSouq community 🌱
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
+
+      <style jsx global>{`
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.5s ease-out;
+        }
+      `}</style>
     </div>
   );
 }

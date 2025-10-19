@@ -4,7 +4,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function RegisterPage() {
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ 
+    name: "", 
+    email: "", 
+    password: "" 
+  });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const router = useRouter();
@@ -14,10 +18,33 @@ export default function RegisterPage() {
     setLoading(true);
     setMessage("");
 
+    // Client-side validation
+    if (!form.email || !form.password) {
+      setMessage("❌ Email and password are required");
+      setLoading(false);
+      return;
+    }
+
+    if (form.password.length < 6) {
+      setMessage("❌ Password must be at least 6 characters long");
+      setLoading(false);
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      setMessage("❌ Please enter a valid email address");
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json" 
+        },
         body: JSON.stringify({
           name: form.name.trim(),
           email: form.email.trim(),
@@ -29,15 +56,27 @@ export default function RegisterPage() {
       
       if (res.ok) {
         setMessage("✅ Registered successfully! Redirecting to login...");
-        setTimeout(() => router.push("/login"), 1500);
+        setTimeout(() => router.push("/login"), 2000);
       } else {
-        setMessage(data.error || "❌ Registration failed. Please try again.");
+        setMessage(`❌ ${data.error || "Registration failed. Please try again."}`);
       }
     } catch (error) {
-      setMessage("❌ Network error. Please check your connection.");
+      console.error("Registration error:", error);
+      setMessage("❌ Network error. Please check your connection and try again.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear message when user starts typing
+    if (message) setMessage("");
   };
 
   return (
@@ -60,17 +99,18 @@ export default function RegisterPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Input */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center">
+              <label htmlFor="name" className="text-sm font-medium text-gray-700 flex items-center">
                 <span className="mr-2">👤</span>
                 Full Name
               </label>
               <input
+                id="name"
+                name="name"
                 type="text"
                 placeholder="Enter your full name"
                 value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                onChange={handleInputChange}
                 className="w-full px-4 py-3 border border-green-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 bg-white/50 hover:bg-white/80"
-                required
                 disabled={loading}
                 minLength={2}
               />
@@ -78,15 +118,17 @@ export default function RegisterPage() {
 
             {/* Email Input */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center">
+              <label htmlFor="email" className="text-sm font-medium text-gray-700 flex items-center">
                 <span className="mr-2">📧</span>
                 Email Address
               </label>
               <input
+                id="email"
+                name="email"
                 type="email"
                 placeholder="Enter your email"
                 value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                onChange={handleInputChange}
                 className="w-full px-4 py-3 border border-green-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 bg-white/50 hover:bg-white/80"
                 required
                 disabled={loading}
@@ -95,15 +137,17 @@ export default function RegisterPage() {
 
             {/* Password Input */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700 flex items-center">
+              <label htmlFor="password" className="text-sm font-medium text-gray-700 flex items-center">
                 <span className="mr-2">🔒</span>
                 Password
               </label>
               <input
+                id="password"
+                name="password"
                 type="password"
                 placeholder="Create a strong password"
                 value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                onChange={handleInputChange}
                 className="w-full px-4 py-3 border border-green-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300 bg-white/50 hover:bg-white/80"
                 required
                 disabled={loading}
