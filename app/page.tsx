@@ -6,6 +6,7 @@ export default function HomePage() {
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // Define the 4 main images
   const mainImages = {
@@ -26,20 +27,48 @@ export default function HomePage() {
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email) return;
+    if (!email) {
+      setError("Please enter your email address");
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
 
     setIsLoading(true);
+    setError("");
 
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
       
+      // Mock API call to check if email exists
+      const mockEmailDatabase = [
+        "user1@example.com",
+        "test@example.com", 
+        "customer@greensouq.com",
+        "plantlover@gmail.com"
+      ];
+
+      const emailExists = mockEmailDatabase.includes(email.toLowerCase());
+      
+      if (!emailExists) {
+        setError("Email not found. Please check your email address or sign up first.");
+        return;
+      }
+
       console.log("Subscribed email:", email);
       
+      // If email exists, proceed with subscription
       setIsSubscribed(true);
       setEmail("");
       
     } catch (error) {
       console.error("Subscription error:", error);
+      setError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -324,7 +353,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Newsletter Section */}
+      {/* Updated Newsletter Section */}
       <section className="bg-gradient-to-r from-green-50 to-emerald-100 py-12 sm:py-16 mt-8 sm:mt-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
@@ -335,35 +364,73 @@ export default function HomePage() {
           </p>
           
           {/* Updated Email Subscription Component */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center max-w-md mx-auto">
+          <div className="max-w-md mx-auto">
             {!isSubscribed ? (
-              <>
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base transition-all duration-300 hover:border-green-400"
-                  required
-                />
-                <button 
-                  onClick={handleSubscribe}
-                  disabled={isLoading}
-                  className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm sm:text-base flex items-center justify-center gap-2"
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Subscribing...
-                    </>
-                  ) : (
-                    <>
-                      <span>📧</span>
-                      Subscribe
-                    </>
-                  )}
-                </button>
-              </>
+              <form onSubmit={handleSubscribe} className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <div className="flex-1">
+                    <input
+                      type="email"
+                      placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setError(""); // Clear error when user starts typing
+                      }}
+                      className={`w-full px-4 py-3 rounded-lg border text-sm sm:text-base transition-all duration-300 focus:outline-none focus:ring-2 ${
+                        error 
+                          ? "border-red-300 focus:ring-red-500 hover:border-red-400" 
+                          : "border-gray-300 focus:ring-green-500 focus:border-transparent hover:border-green-400"
+                      }`}
+                      required
+                    />
+                  </div>
+                  <button 
+                    type="submit"
+                    disabled={isLoading}
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-sm sm:text-base flex items-center justify-center gap-2 whitespace-nowrap min-w-[140px]"
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Checking...
+                      </>
+                    ) : (
+                      <>
+                        <span>📧</span>
+                        Subscribe
+                      </>
+                    )}
+                  </button>
+                </div>
+                
+                {/* Error Message */}
+                {error && (
+                  <div className="animate-fade-in">
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-left">
+                      <div className="flex items-start gap-2">
+                        <span className="text-red-500 text-lg flex-shrink-0">⚠️</span>
+                        <div>
+                          <p className="text-red-800 font-medium text-sm">{error}</p>
+                          <p className="text-red-600 text-xs mt-1">
+                            Don't have an account?{" "}
+                            <button 
+                              type="button" 
+                              className="underline hover:text-red-700 font-medium"
+                              onClick={() => {
+                                // You can add signup logic here
+                                console.log("Redirect to signup");
+                              }}
+                            >
+                              Sign up here
+                            </button>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </form>
             ) : (
               <div className="w-full bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-4 text-center animate-fade-in">
                 <div className="flex items-center justify-center gap-3">
@@ -387,11 +454,11 @@ export default function HomePage() {
 
       <style jsx global>{`
         @keyframes fade-in {
-          from { opacity: 0; transform: translateY(10px); }
+          from { opacity: 0; transform: translateY(-10px); }
           to { opacity: 1; transform: translateY(0); }
         }
         .animate-fade-in {
-          animation: fade-in 0.5s ease-out;
+          animation: fade-in 0.3s ease-out;
         }
       `}</style>
     </div>
