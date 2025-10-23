@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -10,7 +10,6 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        // Replace this with your actual DB user check
         if (
           credentials?.email === "test@example.com" &&
           credentials?.password === "123456"
@@ -22,9 +21,12 @@ const handler = NextAuth({
     }),
   ],
   pages: {
-    signIn: "/login", // optional
+    signIn: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
 
+const handler = NextAuth(authOptions);
+
+// ✅ Ye line rakho — authOptions yahan dobara export mat karo
 export { handler as GET, handler as POST };
