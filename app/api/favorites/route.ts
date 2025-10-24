@@ -2,7 +2,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/authOptions";
+
 
 export async function GET() {
   try {
@@ -87,7 +88,8 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const favorite = user.favorites.find(fav => fav.id === id);
+    const favorite = user.favorites.find((fav: any) => fav.id === id);
+
     if (!favorite) {
       return NextResponse.json({ error: "Favorite not found" }, { status: 404 });
     }

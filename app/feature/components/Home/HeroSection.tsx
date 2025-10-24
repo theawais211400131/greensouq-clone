@@ -25,11 +25,12 @@ export function HeroSection() {
 
           {/* Right image */}
           <div className="relative">
-            <img 
-              src={heroImage} 
-              alt="Beautiful indoor plants"
-              className="w-full h-auto rounded-lg shadow-lg"
-            />
+            <img
+  src={heroImage.src}
+  alt="Beautiful indoor plants"
+  className="w-full h-auto rounded-lg shadow-lg"
+/>
+
           </div>
         </div>
       </div>
