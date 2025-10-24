@@ -8,6 +8,7 @@ import { PotsSection } from './PotsSection';
 import { SoilSection } from './SoilSection';
 import { NewsletterSection } from './NewsletterSection';
 import PlantBundleSection from './PlantBundleSection';
+import Footer from '@/app/Footer';
 
 
 export default function Home() {
@@ -24,6 +25,7 @@ export default function Home() {
         <PotsSection />
         <SoilSection />
         <NewsletterSection />
+        <Footer/>
       </main>
     </div>
   );

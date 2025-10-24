@@ -1,6 +1,7 @@
 import "./globals.css";
 import Providers from "@/components/providers";
 import Navbar from "@/components/Navbar";
+import Footer from "./Footer";
 
 export const metadata = {
   title: "GreenSouq Clone",
@@ -18,6 +19,7 @@ export default function RootLayout({
         <Providers>
           <Navbar />
           {children}
+          
         </Providers>
       </body>
     </html>

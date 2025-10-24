@@ -58,7 +58,12 @@ export default function RegisterPage() {
         setMessage("✅ Registered successfully! Redirecting to login...");
         setTimeout(() => router.push("/login"), 2000);
       } else {
-        setMessage(`❌ ${data.error || "Registration failed. Please try again."}`);
+        // Handle "user already exists" error
+        if (data.error?.includes("already exists") || data.error?.includes("already registered")) {
+          setMessage("❌ User already exists with this email. Please login or use forgot password.");
+        } else {
+          setMessage(`❌ ${data.error || "Registration failed. Please try again."}`);
+        }
       }
     } catch (error) {
       console.error("Registration error:", error);
@@ -88,7 +93,9 @@ export default function RegisterPage() {
           {/* Header with Icon */}
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg animate-pulse-slow">
-              <span className="text-3xl text-white">🌱</span>
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-700 bg-clip-text text-transparent">
               Join Our Community
@@ -100,7 +107,9 @@ export default function RegisterPage() {
             {/* Name Input */}
             <div className="space-y-2">
               <label htmlFor="name" className="text-sm font-medium text-gray-700 flex items-center">
-                <span className="mr-2">👤</span>
+                <svg className="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
                 Full Name
               </label>
               <input
@@ -119,7 +128,9 @@ export default function RegisterPage() {
             {/* Email Input */}
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium text-gray-700 flex items-center">
-                <span className="mr-2">📧</span>
+                <svg className="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
                 Email Address
               </label>
               <input
@@ -138,7 +149,9 @@ export default function RegisterPage() {
             {/* Password Input */}
             <div className="space-y-2">
               <label htmlFor="password" className="text-sm font-medium text-gray-700 flex items-center">
-                <span className="mr-2">🔒</span>
+                <svg className="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
                 Password
               </label>
               <input
@@ -172,7 +185,9 @@ export default function RegisterPage() {
                   </>
                 ) : (
                   <>
-                    <span className="mr-2 group-hover:scale-110 transition-transform">✨</span>
+                    <svg className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
                     Create Account
                   </>
                 )}
@@ -200,7 +215,9 @@ export default function RegisterPage() {
                 className="text-green-600 hover:text-green-700 font-semibold transition-all duration-300 hover:underline inline-flex items-center group"
               >
                 Sign in here
-                <span className="ml-1 group-hover:translate-x-1 transition-transform">→</span>
+                <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
               </Link>
             </p>
           </div>
@@ -208,7 +225,9 @@ export default function RegisterPage() {
           {/* Security Note */}
           <div className="mt-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
             <div className="flex items-start">
-              <span className="text-blue-500 mr-2 text-sm">🔐</span>
+              <svg className="w-4 h-4 text-blue-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
               <p className="text-xs text-blue-700">
                 Your data is securely encrypted and protected. We never share your personal information.
               </p>
